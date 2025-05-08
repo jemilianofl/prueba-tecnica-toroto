@@ -108,6 +108,22 @@ def obtener_table_id(doc_id, nombre_tabla):
             return tabla["id"]
     raise ValueError(f"No se encontró la tabla '{nombre_tabla}' en el documento.")
 
+def eliminar_todas_las_filas(doc_id, table_id):
+    print("🧹 Eliminando filas existentes en Coda...")
+    url = f"https://coda.io/apis/v1/docs/{doc_id}/tables/{table_id}/rows"
+    r = requests.get(url, headers=headers)
+    r.raise_for_status()
+    rows = r.json().get("items", [])
+    ids = [row["id"] for row in rows]
+
+    for i in range(0, len(ids), 50):
+        batch = {"rowIds": ids[i:i+50]}
+        r = requests.delete(f"https://coda.io/apis/v1/docs/{doc_id}/tables/{table_id}/rows", headers=headers, json=batch)
+        if r.status_code == 202:
+            print(f"🗑️ {len(batch['rowIds'])} filas eliminadas.")
+        else:
+            print(f"❌ Error al eliminar filas: {r.status_code} - {r.text}")
+
 def insertar_filas_en_bloques(doc_id, table_id, filas, batch_size=10, max_reintentos=5):
     def serializar_fila(fila):
         return {
@@ -148,4 +164,6 @@ if __name__ == "__main__":
     print(f"📦 Obras a sincronizar: {len(df_obras)}")
 
     filas_dicts = [row.dropna().to_dict() for _, row in df_obras.iterrows()]
+    # Se limpian las filas antes de insertar
+    eliminar_todas_las_filas(doc_id, table_id)
     insertar_filas_en_bloques(doc_id, table_id, filas_dicts)
