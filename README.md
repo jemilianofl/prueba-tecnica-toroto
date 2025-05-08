@@ -47,7 +47,7 @@ Desarrollar un sistema que automatice la carga de datos de obras desde archivos 
 |----------|----------|
 | Python               | Lógica de negocio y procesamiento |
 | SQLAlchemy | ORM para interactuar con la base de datos   |
-| PostgreSQL (Supabase) | Almacenamiento de datos estructurados   |
+| PostgreSQL (Railway) | Almacenamiento de datos estructurados   |
 | Streamlit              | Dashboard interactivo |
 | Plotly | ORM para interactuar con la base de datos   |
 | Coda API    | Integración con herramientas colaborativas   |
@@ -63,3 +63,7 @@ Desarrollar un sistema que automatice la carga de datos de obras desde archivos 
 - 🧠 Visualizaciones interactivas para facilitar el análisis técnico y operativo.
 
 - 🌐 Accesible desde la nube por cualquier miembro del equipo.
+
+# Nuevas Funcionalidades
+- Se agregaron nuevas carpetas con el sufijo Railway debido a migración del servicio completo a Railway, esto por el despliegue de las aplicaciones y redireccion de los servicios.
+- Pueden acceder al [Dashboard en:](toroto-parte03-railway-production.up.railway.app)
