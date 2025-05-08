@@ -6,6 +6,12 @@ from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import socket
+
+original_getaddrinfo = socket.getaddrinfo
+def force_ipv4_getaddrinfo(*args, **kwargs):
+    return [info for info in original_getaddrinfo(*args, **kwargs) if info[0] == socket.AF_INET]
+socket.getaddrinfo = force_ipv4_getaddrinfo
 
 # Cargar variables de entorno
 load_dotenv()
