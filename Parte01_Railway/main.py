@@ -5,16 +5,33 @@ from models import Base, Proyecto, Cuadrilla, Responsable, Obra, Evidencia, gene
 from dotenv import load_dotenv
 import os
 from datetime import datetime
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+print("🔐 Conectando a PostgreSQL y Google Sheets...")
 
 load_dotenv()
 RAILWAY_URL = os.getenv("POSTGRES_URL")
+
+# Conexion a Google Sheets
+CREDENTIALS_FILE = os.getenv("CREDENTIALS_FILE")
+if not os.path.exists(CREDENTIALS_FILE):
+    raise FileNotFoundError(f"Credenciales no encontradas en: {CREDENTIALS_FILE}")
+# URL o ID de la hoja
+GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1vjzSorAdthIfQAp8uTbNvp--XKqXZVnN1trzkfkmmHA/export?format=xlsx'
+NOMBRE_HOJA = 'Hoja 1'
+# Autenticación
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, scope)
+client = gspread.authorize(creds)
 
 engine = create_engine(RAILWAY_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Cargar datos
-df = pd.read_excel("Datos.xlsx", sheet_name="Hoja 1")
+print("✅ Conexión a Railway establecida.")
+
+df = pd.read_excel(GOOGLE_SHEET_URL, sheet_name="Hoja 1")
 df = df.applymap(lambda x: str(x).strip() if isinstance(x, str) else x)
 
 # Insertar proyectos únicos
@@ -63,8 +80,8 @@ for _, row in df.iterrows():
         tipo_obra=row.get('Tipo de Obra'),
         nombre_obra=row.get('Nombre de la obra'),
         estado=row.get('Estado'),
-        fecha_inicio=pd.to_datetime(row.get('Fecha de inicio'), errors='coerce'),
-        fecha_fin=pd.to_datetime(row.get('Fecha de finalización'), errors='coerce'),
+        fecha_inicio=pd.to_datetime(row.get('Fecha de inicio'), errors='coerce', dayfirst=True),
+        fecha_fin=pd.to_datetime(row.get('Fecha de finalización'), errors='coerce', dayfirst=True),
         coordenadas=row.get('Coordenadas'),
         geometria=row.get('Geometría para la gráfica de la obra'),
         base_mayor_m=row.get('Base mayor (m)'),
@@ -79,6 +96,7 @@ for _, row in df.iterrows():
     )
 
     session.add(obra)
+    session.flush()
 
     for i in range(1, 6):
         url = row.get(f"Evidencia fotográfica {i}")
