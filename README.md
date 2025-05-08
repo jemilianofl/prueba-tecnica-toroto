@@ -10,11 +10,11 @@ Desarrollar un sistema que automatice la carga de datos de obras desde archivos 
 ---
 # 🧩 Componentes de la Solución
 
-🔹 Parte 1: Ingesta de Datos a Supabase
+🔹 Parte 1: Ingesta de Datos a Railway (Postgres)
 
 - Lectura y normalización de un archivo Excel.
 
-- Inserción de datos en PostgreSQL (Supabase) usando SQLAlchemy ORM.
+- Inserción de datos en PostgreSQL (Railway) usando SQLAlchemy ORM.
 
 - Tablas utilizadas: proyectos, cuadrillas, responsables, obras, evidencias. 
 
@@ -22,7 +22,7 @@ Desarrollar un sistema que automatice la carga de datos de obras desde archivos 
 
 🔹 Parte 2: Sincronización con [Coda.io](https://coda.io/developers/apis/v1#)
 
-- Extracción de datos desde Supabase con ORM.
+- Extracción de datos desde Railway con ORM.
 
 - Serialización e inserción de bloques de datos en una tabla de Coda usando su API.
 
